@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chaintech Tasks</title>
+  <link rel="shortcut icon" href="#" type="image/x-icon">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+  <div class="body-container">
+    <form action="/" method="get">
+      <button class="logo" type="submit">
+        <h1>Chaintech Tasks</h1>
+      </button>
+    </form>
+    <div>
+      <%= locals.error %>
+    </div>
+    <form action="/" method="post">
+      <div>
+        <label>Category
+          <select name="inputcategory">
+            <option value="upcoming">Upcoming</option>
+            <option value="important">Important</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </label>
+        <label>Title
+          <input type="text" name="title" required>
+        </label>
+        <select name="completed">
+          <option value="false">Pending</option>
+          <option value="true">Completed</option>
+        </select>
+      </div>
+      <div>
+        <label>Description
+          <textarea name="desc" cols="40" rows="5"></textarea>
+        </label>
+        <label>Due Date
+          <input type="datetime-local" name="duedate">
+        </label>
+        <input type="text" name="cryptoid" hidden>
+        <button type="submit">Add Task</button>
+      </div>
+    </form>
+
+    <div>
+      <form action="/display" method="post">
+        <label>Category
+          <select name="listcategory">
+            <option value="all">All</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="important">Important</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </label>
+        <button type="submit">Show Tasks</button>
+      </form>
+    </div>
+
+    <div>
+      <h1>Update tasks</h1>
+      <% array.forEach((element, index)=> { %>
+        <form action="/update/<%= element.cryptoid %>/<%= index %>" method="post">
+          <div>
+            <label>Category
+              <select name="liinputcategory<%= index %>">
+                <% categ.forEach(elem=> { %>
+                  <% if (elem==element.category) { %>
+                    <option value="<%= elem %>" selected>
+                      <%= elem %>
+                    </option>
+                    <% } else { %>
+                      <option value="<%= elem %>">
+                        <%= elem %>
+                      </option>
+                      <% } %>
+                        <% }) %>
+              </select>
+            </label>
+            <label>Title *
+              <input type="text" name="lititle<%= index %>" value="<%= element.title %>" required>
+            </label>
+            <select name="licompleted<%= index %>">
+              <% if (element.completed) { %>
+                <option value="false">Pending</option>
+                <option value="true" selected>Completed</option>
+                <% } else { %>
+                  <option value="false" selected>Pending</option>
+                  <option value="true">Completed</option>
+                  <% } %>
+            </select>
+            <label>Description
+              <textarea name="lidesc<%= index %>" cols="40" rows="5"><%= element.desc %></textarea>
+            </label>
+            <label>Due Date
+              <input type="datetime-local" name="liduedate<%= index %>" value="<%= element.duedate %>">
+            </label>
+            <button type="submit">Save</button>
+          </div>
+        </form>
+        <% }) %>
+    </div>
+
+    <div>
+      <h1>Delete tasks</h1>
+      <% array.forEach((element)=> { %>
+        <div>
+          <form action="/delete/<%= element.cryptoid %>" method="post">
+            <label>Category
+              <select name="liinputcategory">
+                <% categ.forEach(elem=> { %>
+                  <% if (elem==element.category) { %>
+                    <option value="<%= elem %>" selected>
+                      <%= elem %>
+                    </option>
+                    <% } else { %>
+                      <option value="<%= elem %>">
+                        <%= elem %>
+                      </option>
+                      <% } %>
+                        <% }) %>
+              </select>
+            </label>
+            <label>Title *
+              <input type="text" name="lititle" value="<%= element.title %>" required>
+            </label>
+            <select name="licompleted">
+              <% if (element.completed) { %>
+                <option value="false">Pending</option>
+                <option value="true" selected>Completed</option>
+                <% } else { %>
+                  <option value="false" selected>Pending</option>
+                  <option value="true">Completed</option>
+                  <% } %>
+            </select>
+            <label>Description
+              <textarea name="lidesc" cols="40" rows="5"><%= element.desc %></textarea>
+            </label>
+            <label>Due Date
+              <input type="datetime-local" name="liduedate" value="<%= element.duedate %>">
+            </label>
+            <button type="submit">Delete</button>
+          </form>
+        </div>
+        <% }) %>
+    </div>
+  </div>
+
+</body>
+
+</html>
