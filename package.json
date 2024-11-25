@@ -1,7 +1,7 @@
 {
-  "name": "devesh-nodejs-chaintech",
+  "name": "nodejs-task-manager",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "devstart": "nodemon server.js"
   },

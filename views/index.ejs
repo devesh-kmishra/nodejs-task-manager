@@ -4,24 +4,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chaintech Tasks</title>
-  <link rel="shortcut icon" href="#" type="image/x-icon">
+  <title>TaskMax</title>
+  <link rel="icon" href="/favicon/favicon.ico?v=1.1">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
   <div class="body-container">
-    <form action="/" method="get">
-      <button class="logo" type="submit">
-        <h1>Chaintech Tasks</h1>
-      </button>
-    </form>
-    <div>
-      <%= locals.error %>
+    <div class="logo-container">
+      <form action="/" method="get">
+        <button class="logo-btn" type="submit">
+          <h1>TaskMax</h1>
+        </button>
+      </form>
     </div>
+
     <form action="/" method="post">
-      <div>
+      <div class="input-cont-1">
+        <label><span class="asterisk">*</span>Title
+          <input type="text" name="title" required>
+        </label>
+        <select name="completed">
+          <option value="false">Pending</option>
+          <option value="true">Completed</option>
+        </select>
         <label>Category
           <select name="inputcategory">
             <option value="upcoming">Upcoming</option>
@@ -29,29 +36,22 @@
             <option value="urgent">Urgent</option>
           </select>
         </label>
-        <label>Title
-          <input type="text" name="title" required>
-        </label>
-        <select name="completed">
-          <option value="false">Pending</option>
-          <option value="true">Completed</option>
-        </select>
       </div>
-      <div>
-        <label>Description
-          <textarea name="desc" cols="40" rows="5"></textarea>
+
+      <div class="input-cont-2">
+        <label>
+          <textarea name="desc" cols="40" rows="5" placeholder="Description"></textarea>
         </label>
         <label>Due Date
           <input type="datetime-local" name="duedate">
         </label>
-        <input type="text" name="cryptoid" hidden>
-        <button type="submit">Add Task</button>
+        <button class="btn add-btn" type="submit">Add Task</button>
       </div>
     </form>
 
-    <div>
+    <div class="filter">
       <form action="/display" method="post">
-        <label>Category
+        <label>Filter
           <select name="listcategory">
             <option value="all">All</option>
             <option value="upcoming">Upcoming</option>
@@ -59,31 +59,16 @@
             <option value="urgent">Urgent</option>
           </select>
         </label>
-        <button type="submit">Show Tasks</button>
+        <button class="btn" type="submit">Show Tasks</button>
       </form>
     </div>
 
-    <div>
-      <h1>Update tasks</h1>
+    <div class="update-cont">
+      <h2 class="header">Update Tasks</h2>
       <% array.forEach((element, index)=> { %>
         <form action="/update/<%= element.cryptoid %>/<%= index %>" method="post">
-          <div>
-            <label>Category
-              <select name="liinputcategory<%= index %>">
-                <% categ.forEach(elem=> { %>
-                  <% if (elem==element.category) { %>
-                    <option value="<%= elem %>" selected>
-                      <%= elem %>
-                    </option>
-                    <% } else { %>
-                      <option value="<%= elem %>">
-                        <%= elem %>
-                      </option>
-                      <% } %>
-                        <% }) %>
-              </select>
-            </label>
-            <label>Title *
+          <div class="task">
+            <label><span class="asterisk">*</span>Title
               <input type="text" name="lititle<%= index %>" value="<%= element.title %>" required>
             </label>
             <select name="licompleted<%= index %>">
@@ -94,43 +79,41 @@
                   <option value="false" selected>Pending</option>
                   <option value="true">Completed</option>
                   <% } %>
-            </select>
-            <label>Description
-              <textarea name="lidesc<%= index %>" cols="40" rows="5"><%= element.desc %></textarea>
-            </label>
+                </select>
+                <label>Category
+                  <select class="uppercase" name="liinputcategory<%= index %>">
+                    <% categ.forEach(elem=> { %>
+                      <% if (elem==element.category) { %>
+                        <option value="<%= elem %>" selected>
+                          <%= elem %>
+                        </option>
+                        <% } else { %>
+                          <option value="<%= elem %>">
+                            <%= elem %>
+                          </option>
+                          <% } %>
+                            <% }) %>
+                  </select>
+                </label>
+            <textarea name="lidesc<%= index %>" cols="40" rows="5"><%= element.desc %></textarea>
             <label>Due Date
               <input type="datetime-local" name="liduedate<%= index %>" value="<%= element.duedate %>">
             </label>
-            <button type="submit">Save</button>
+            <button class="btn" type="submit">Save</button>
           </div>
         </form>
         <% }) %>
     </div>
 
     <div>
-      <h1>Delete tasks</h1>
+      <h2 class="header">Delete Tasks</h2>
       <% array.forEach((element)=> { %>
-        <div>
+        <div class="task">
           <form action="/delete/<%= element.cryptoid %>" method="post">
-            <label>Category
-              <select name="liinputcategory">
-                <% categ.forEach(elem=> { %>
-                  <% if (elem==element.category) { %>
-                    <option value="<%= elem %>" selected>
-                      <%= elem %>
-                    </option>
-                    <% } else { %>
-                      <option value="<%= elem %>">
-                        <%= elem %>
-                      </option>
-                      <% } %>
-                        <% }) %>
-              </select>
+            <label>Title
+              <input type="text" name="lititle" value="<%= element.title %>" readonly>
             </label>
-            <label>Title *
-              <input type="text" name="lititle" value="<%= element.title %>" required>
-            </label>
-            <select name="licompleted">
+            <select name="licompleted" disabled>
               <% if (element.completed) { %>
                 <option value="false">Pending</option>
                 <option value="true" selected>Completed</option>
@@ -138,14 +121,27 @@
                   <option value="false" selected>Pending</option>
                   <option value="true">Completed</option>
                   <% } %>
-            </select>
-            <label>Description
-              <textarea name="lidesc" cols="40" rows="5"><%= element.desc %></textarea>
-            </label>
+                </select>
+                <label>Category
+                  <select class="uppercase" name="liinputcategory" disabled>
+                    <% categ.forEach(elem=> { %>
+                      <% if (elem==element.category) { %>
+                        <option value="<%= elem %>" selected>
+                          <%= elem %>
+                        </option>
+                        <% } else { %>
+                          <option value="<%= elem %>">
+                            <%= elem %>
+                          </option>
+                          <% } %>
+                            <% }) %>
+                  </select>
+                </label>
+            <textarea name="lidesc" cols="40" rows="5" readonly><%= element.desc %></textarea>
             <label>Due Date
-              <input type="datetime-local" name="liduedate" value="<%= element.duedate %>">
+              <input type="datetime-local" name="liduedate" value="<%= element.duedate %>" readonly>
             </label>
-            <button type="submit">Delete</button>
+            <button class="btn del-btn" type="submit">Delete</button>
           </form>
         </div>
         <% }) %>

@@ -1,19 +1,18 @@
 const express = require('express');
-const app = express();
-const router = express.Router();
 const Todo = require('../models/listmodel');
+const router = express.Router();
 
 const categ = ['upcoming', 'important', 'urgent'];
 let array = [];
 
 // HOME PAGE
 router.get('/', async (req, res) => {
-  res.render('index', { array: array, categ: categ });
+  res.status(200).render('index', { array: [], categ: categ });
 });
 
 // INVALID URL
 router.get('/*', (req, res) => {
-  res.render('error');
+  res.status(404).render('err404');
 });
 
 // DISPLAY TASKS by selected category
@@ -23,14 +22,14 @@ router.post('/display', getTasks, async (req, res) => {
   try {
     res.status(200).render('index', { array: array, categ: categ });
   } catch (err) {
-    res.status(500).render('index', { error: err.message });
+    res.status(500).render('err500');
   }
 });
 
 // UPDATE TASK
 router.post('/update/:cryptoid/:id', getTask, getTasks, async (req, res) => {
   array = res.tasks;
-
+  
   let newCategory, newCompleted, newTitle, newDesc, newDuedate;
   for (let [key, value] of Object.entries(req.body)) {
     if (key == `liinputcategory${req.params.id}`) {
@@ -56,7 +55,7 @@ router.post('/update/:cryptoid/:id', getTask, getTasks, async (req, res) => {
     await res.task.save();
     res.status(200).render('index', { array: array, categ: categ });
   } catch (err) {
-    res.status(400).render('index', { array: array, categ: categ, error: err.message });
+    res.status(400).render('err400');
   }
 });
 
@@ -67,13 +66,12 @@ router.post('/delete/:cryptoid', getTasks, async (req, res) => {
   try {
     const task = await Todo.findOneAndDelete({ cryptoid: req.params.cryptoid });
     if (task) {
-      console.log('Deleted User :)');
       res.status(200).render('index', { array: array, categ: categ });
     } else {
-      console.log('Error Occured');
+      res.status(500).render('err500');
     }
   } catch (err) {
-    res.status(500).render('index', { array: array, categ: categ, error: err.message });
+    res.status(500).render('err500');
   }
 });
 
@@ -91,17 +89,17 @@ router.post('/', getTasks, async (req, res) => {
     await task.save();
     res.status(201).render('index', { array: array, categ: categ });
   } catch (err) {
-    res.status(400).render('index', { array: array, categ: categ, error: err.message });
+    res.status(400).render('err400');
   }
 });
 
-// FETCH SAME TASK FOR UPDATING OR DELETING - MIDDLEWARE
+// FETCH SAME TASK FOR UPDATING OR DELETING
 async function getTask(req, res, next) {
   let task;
   try {
     task = await Todo.findOne({ cryptoid: req.params.cryptoid });
   } catch (err) {
-    return res.status(404).render('index', { error: err.message });
+    return res.status(404).render('err404');
   }
 
   res.task = task;
@@ -118,7 +116,7 @@ async function getTasks(req, res, next) {
       tasks = await Todo.find({ category: req.body.listcategory });
     }
   } catch (err) {
-    return res.status(500).render('index', { error: err.message });
+    return res.status(500).render('err500');
   }
 
   res.tasks = tasks;
@@ -126,7 +124,3 @@ async function getTasks(req, res, next) {
 }
 
 module.exports = router;
-
-// remember to router.route.get.post...
-// remember to handle errors
-// remove all error: err.message
